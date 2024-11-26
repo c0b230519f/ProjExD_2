@@ -90,7 +90,7 @@ def main():
         # 時間に応じて爆弾のサイズと加速度を変更
         avx = vx * bb_accs[min(tmr // 500, 9)]  # 加速度適用
         avy = vy * bb_accs[min(tmr // 500, 9)]
-        bb_img = bb_imgs[min(tmr // 500, 9)]
+        bb_img = bb_imgs[min(tmr // 500, 9)] #爆弾拡大
 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
