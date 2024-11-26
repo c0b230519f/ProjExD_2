@@ -29,8 +29,8 @@ def check_bound(rct):
 
 def gameover(screen: pg.Surface) -> None:
     go_Surface = pg.Surface((WIDTH, HEIGHT))
-    pg.draw.rect(go_Surface,(0, 0, 128), (0, 0, WIDTH, HEIGHT))
-    go_Surface.set_alpha(128)  # 透明度設定
+    pg.draw.rect(go_Surface,(0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    go_Surface.set_alpha(200)  # 透明度設定
      # 泣いているこうかとん画像
     crying_kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
     crying_kk_left = crying_kk_img.get_rect()
@@ -49,6 +49,16 @@ def gameover(screen: pg.Surface) -> None:
     pg.display.update()
     time.sleep(5)  # 5秒間停止
 
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs = []
+    accs = [a for a in range(1, 11)]  # 加速度リスト
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))  # 可変サイズの爆弾Surface
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)  # 円を描く
+        bb_img.set_colorkey((0, 0, 0))  # 黒を透過色に設定
+        bb_imgs.append(bb_img)  # リストに追加
+    return bb_imgs, accs
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -61,6 +71,7 @@ def main():
     bb_img.set_colorkey((0, 0, 0))
     bb_rct = bb_img.get_rect()
     bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+    bb_imgs, bb_accs = init_bb_imgs()
 
     vx, vy = 5, 5
 
@@ -76,6 +87,11 @@ def main():
             
         screen.blit(bg_img, [0, 0]) 
 
+        # 時間に応じて爆弾のサイズと加速度を変更
+        avx = vx * bb_accs[min(tmr // 500, 9)]  # 加速度適用
+        avy = vy * bb_accs[min(tmr // 500, 9)]
+        bb_img = bb_imgs[min(tmr // 500, 9)]
+
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for key, delta in DELTA.items():
@@ -88,7 +104,7 @@ def main():
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)
+        bb_rct.move_ip(avx, avy)
         yoko, tate = check_bound(bb_rct)
         if not yoko:
             vx *= -1
