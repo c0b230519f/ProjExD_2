@@ -29,7 +29,7 @@ def check_bound(rct):
 
 def gameover(screen: pg.Surface) -> None:
     go_Surface = pg.Surface((WIDTH, HEIGHT))
-    pg.draw.rect(go_Surface,(0, 0, 0), (0, 0, WIDTH, HEIGHT))
+    pg.draw.rect(go_Surface,(0, 0, 0))
     go_Surface.set_alpha(200)  # 透明度設定
      # 泣いているこうかとん画像
     crying_kk_img = pg.transform.rotozoom(pg.image.load("fig/8.png"), 0, 0.9)
